@@ -93,20 +93,24 @@ class Protect
 	*/
 	private static function _validateValue($value, $error = '%s')
 	{
-		$wrongType = '';
 		if (empty($value))
 		{
 			$wrongType = 'an empty value';
+		} else
+		if (is_scalar($value))
+		{
+			$wrongType = '';
 		} else
 		if (is_array($value))
 		{
 			$wrongType = 'an array';
 		} else
-		if (is_object($value) && !is_callable(array($value, '__toString')))
+		if (is_object($value))
 		{
-			$wrongType = 'an object';
+			$wrongType = !is_callable(array($value, '__toString'))
+				? 'an object'
+				: '';
 		} else
-		if (!is_scalar($value))
 		{
 			/* resources ? */
 			$wrongType = 'unexpected type (' . (string) $value . ')';
@@ -281,6 +285,12 @@ class Protect
 
 	/////////////////////////////////////////////////////////////////////
 
+	/**
+	* Protects a variable by replacing sensitive data inside it
+	* @param mixed $var only strings and arrays will be processed, other
+	*	types will be returned as they are
+	* @return string
+	*/
 	static function protect($var)
 	{
 		if (is_scalar($var))
@@ -301,6 +311,11 @@ class Protect
 		}
 	}
 
+	/**
+	* Protects a scalar value by replacing sensitive data inside it
+	* @param string $var
+	* @return string
+	*/
 	static function protectScalar($var)
 	{
 		// hide values
@@ -316,10 +331,10 @@ class Protect
 		{
 			self::$hideInputs = array(
 				INPUT_SERVER => array(
-					'PHP_AUTH_PW'
+					'PHP_AUTH_PW' => 1
 					),
 				INPUT_POST => array(
-					'password'
+					'password' => true
 					),
 				);
 		}
@@ -441,11 +456,6 @@ class Protect
 						)
 					);
 			}
-		} else
-		{
-			throw new \RangeException(
-				"Unknown input type \"{$type}\"!"
-				);
 		}
 	}
 }

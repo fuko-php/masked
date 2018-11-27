@@ -94,19 +94,22 @@ class Redact
 		$unmaskedChars = (int) $unmaskedChars;
 		$maskSymbol = filter_var($maskSymbol, FILTER_SANITIZE_STRING);
 
-		/* not enough chars to unmask ? */
+		// not enough chars to unmask ?
+		//
 		if (abs($unmaskedChars) >= strlen($value))
 		{
 			$unmaskedChars = 0;
 		}
 
-		/* at least half must be masked ? */
+		// at least half must be masked ?
+		//
 		if (abs($unmaskedChars) > strlen($value)/2)
 		{
 			$unmaskedChars = round($unmaskedChars/2);
 		}
 
-		/* leading unmasked chars */
+		// leading unmasked chars
+		//
 		if ($unmaskedChars < 0)
 		{
 			$unmasked = substr($value, 0, -$unmaskedChars);
@@ -115,7 +118,8 @@ class Redact
 				);
 		}
 
-		/* trailing unmasked chars */
+		// trailing unmasked chars
+		//
 		$unmasked = $unmaskedChars
 			? substr($value, -$unmaskedChars)
 			: '';
