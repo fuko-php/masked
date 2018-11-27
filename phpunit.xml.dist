@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<phpunit colors="true"
+	convertErrorsToExceptions="true" 
+	stopOnFailure="false">
+	<testsuites>
+		<testsuite name="Fuko\Masked Tests Suite">
+			<directory>tests/</directory>
+		</testsuite>
+	</testsuites>
+
+	<filter>
+		<whitelist addUncoveredFilesFromWhitelist="true">
+			<directory suffix=".php">src/</directory>
+			<exclude>
+				<directory>./tests</directory>
+				<directory>./vendor</directory>
+			</exclude>
+		</whitelist>
+	</filter>
+</phpunit>

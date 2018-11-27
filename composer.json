@@ -20,5 +20,15 @@
 		"psr-4": {
 			"Fuko\\Masked\\": "src/"
 		}
-	}
+	},
+
+	"require-dev": {
+		"phpunit/phpunit": "^4.8.35 || ^5.7"
+	},
+
+        "autoload-dev": {
+		"psr-4": {
+			"Fuko\\Masked\\Tests\\": "tests/"
+		}
+        }
 }
