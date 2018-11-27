@@ -95,6 +95,36 @@ Array
 */
 ```
 
+Recently in Laravel 5 there is a [new feature](https://github.com/laravel/framework/pull/21336) added that introduces configuration option ["debug_blacklist"](https://laravel.com/docs/5.7/configuration#hiding-environment-variables-from-debug) for [Whoops](https://github.com/filp/whoops) to hide several sensitive variables. Here's how this can be done with `\Fuko\Masked\Protect` instead:
+
+```php
+use \Fuko\Masked\Protect;
+
+Protect::hideInputs(array(
+	INPUT_ENV => array(
+		'APP_KEY',
+		'DB_PASSWORD',
+		'REDIS_PASSWORD',
+		'MAIL_PASSWORD',
+		'PUSHER_APP_KEY',
+		'PUSHER_APP_SECRET',
+		),
+	INPUT_SERVER => array(
+		'APP_KEY',
+		'DB_PASSWORD',
+		'REDIS_PASSWORD',
+		'MAIL_PASSWORD',
+		'PUSHER_APP_KEY',
+		'PUSHER_APP_SECRET',
+		),
+	INPUT_POST => array(
+		'password',
+		)
+	)
+);
+```
+After this setup, whatever information you pass through `\Fuko\Masked\Protect::protect()` it will mask the blacklisted inputs.
+
 ## Different Masking
 
 You can use `\Fuko\Masked\Redact` in your project as the library for masking data. By default the class uses `\Fuko\Masked\Redact::disguise()` method for masking, with default settings that masks everything and that uses `█` as masking symbol. Here's how you can change its behaviour:
