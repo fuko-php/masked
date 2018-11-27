@@ -78,6 +78,8 @@ class Redact
 	/**
 	* Get a masked version of a string
 	*
+	* This is the default callback used by {@link Fuko\Masked\Redact::redact()}
+	*
 	* @param string	$value
 	* @param integer $unmaskedChars number of chars to mask; having
 	*	positive number will leave the unmasked symbols at the
@@ -88,12 +90,20 @@ class Redact
 	*/
 	public static function disguise($value, $unmaskedChars = 4, $maskSymbol = '*')
 	{
-		$value = (string) $value;
+		$value = filter_var($value, FILTER_SANITIZE_STRING);
+		$unmaskedChars = (int) $unmaskedChars;
+		$maskSymbol = filter_var($maskSymbol, FILTER_SANITIZE_STRING);
 
 		/* not enough chars to unmask ? */
 		if (abs($unmaskedChars) >= strlen($value))
 		{
 			$unmaskedChars = 0;
+		}
+
+		/* at least half must be masked ? */
+		if (abs($unmaskedChars) > strlen($value)/2)
+		{
+			$unmaskedChars = round($unmaskedChars/2);
 		}
 
 		/* leading unmasked chars */
