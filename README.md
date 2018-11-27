@@ -110,6 +110,7 @@ Protect::hideInputs(array(
 		'PUSHER_APP_SECRET',
 		),
 	INPUT_SERVER => array(
+		'PHP_AUTH_PW',
 		'APP_KEY',
 		'DB_PASSWORD',
 		'REDIS_PASSWORD',
