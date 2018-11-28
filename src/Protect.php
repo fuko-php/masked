@@ -28,7 +28,7 @@ class Protect
 	/**
 	* Clear accumulated values to hide
 	*/
-	static function clearValues()
+	public static function clearValues()
 	{
 		self::$hideValues = array();
 	}
@@ -39,7 +39,7 @@ class Protect
 	* @param array $values array with values of scalars or
 	*	objects that have __toString() methods
 	*/
-	static function hideValues(array $values)
+	public static function hideValues(array $values)
 	{
 		foreach ($values as $k => $value)
 		{
@@ -64,7 +64,7 @@ class Protect
 	* @return boolean|NULL TRUE if added, FALSE if wrong
 	*	type, NULL if already added
 	*/
-	static function hideValue($value)
+	public static function hideValue($value)
 	{
 		if (!self::_validateValue(
 			$value,
@@ -140,7 +140,7 @@ class Protect
 	/**
 	* Clear accumulated inputs to hide
 	*/
-	static function clearInputs()
+	public static function clearInputs()
 	{
 		self::$hideInputs = array();
 	}
@@ -153,7 +153,7 @@ class Protect
 	*	INPUT_SERVER, INPUT_ENV), array values are arrays with
 	*	input names
 	*/
-	static function hideInputs(array $inputs)
+	public static function hideInputs(array $inputs)
 	{
 		foreach ($inputs as $type => $names)
 		{
@@ -208,7 +208,7 @@ class Protect
 	* @return boolean|NULL TRUE if added, FALSE if wrong
 	*	name or type, NULL if already added
 	*/
-	static function hideInput($name, $type = INPUT_REQUEST)
+	public static function hideInput($name, $type = INPUT_REQUEST)
 	{
 		if (!self::_validateInput($name, $type, __METHOD__))
 		{
@@ -292,7 +292,7 @@ class Protect
 	*	will be returned as empty strings
 	* @return string|array
 	*/
-	static function protect($var)
+	public static function protect($var)
 	{
 		if (is_scalar($var))
 		{
@@ -323,7 +323,7 @@ class Protect
 	* @param string $var
 	* @return string
 	*/
-	static function protectScalar($var)
+	public static function protectScalar($var)
 	{
 		// hide values
 		//
