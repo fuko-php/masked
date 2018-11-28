@@ -39,8 +39,8 @@ Array
 
 ***Fuko\\Masked*** does two things:
 
-* first, there is the `\Fuko\Masked\Redact` class which is used to mask sensitive data
-* second, `\Fuko\Masked\Protect` class is used to collect your sensitive data, and redact it
+  * first, there is the `\Fuko\Masked\Redact` class which is used to mask sensitive data
+  * second, `\Fuko\Masked\Protect` class is used to collect your sensitive data, and redact it
 
 By doing the above, you are going to have redacted content with all the sensitive details blacklisted. You do not need to go looking inside all the dumps you create for passwords or credentials, instead you just register them with `\Fuko\Masked\Protect` and that class will mask them wherever it finds them: strings, arrays, big text dumps. It's that simple. The idea is not to have clumsy and overdressed library, but a simple tool that its job well.
 
