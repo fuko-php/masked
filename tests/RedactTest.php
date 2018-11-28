@@ -31,7 +31,7 @@ class RedactTest extends TestCase
 			array(00, '█'),
 			array('41111111111111111', '█████████████████'),
 			array([], ''),
-			array((object) $_SERVER, ''),
+			array((object) ['a' => 1], ''),
 			array($this, ''),
 		);
 	}
