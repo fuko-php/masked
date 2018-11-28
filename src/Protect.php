@@ -15,8 +15,6 @@ namespace Fuko\Masked;
 * Protect sensitive data and redacts it using {@link Fuko\Masked\Redact::redact()}
 *
 * @package Fuko\Masked
-*
-* @todo when protecting, inspect for escapeable chars and look for variations ?
 */
 class Protect
 {
