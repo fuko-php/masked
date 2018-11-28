@@ -287,9 +287,10 @@ class Protect
 
 	/**
 	* Protects a variable by replacing sensitive data inside it
-	* @param mixed $var only strings and arrays will be processed, other
-	*	types will be returned as they are
-	* @return string
+	* @param mixed $var only strings and arrays will be processed,
+	*	objects will be "stringified", other types (resources?)
+	*	will be returned as empty strings
+	* @return string|array
 	*/
 	static function protect($var)
 	{
@@ -313,7 +314,7 @@ class Protect
 			);
 		} else
 		{
-			return $var;
+			return '';
 		}
 	}
 
