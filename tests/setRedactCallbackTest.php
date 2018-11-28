@@ -53,7 +53,7 @@ class setRedactCallbackTest extends TestCase
 		$this->assertTrue($this->mask_flag);
 	}
 
-	function dudu($value)
+	function dudu()
 	{
 		return '💩';
 	}
