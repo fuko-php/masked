@@ -1,4 +1,4 @@
-# Fuko\\Masked
+# Fuko\\Masked [![Latest Version](http://img.shields.io/packagist/v/fuko-php/masked.svg)](https://packagist.org/packages/fuko-php/masked) [![GitHub license](https://img.shields.io/github/license/fuko-php/masked.svg)](https://github.com/fuko-php/masked/blob/master/LICENSE)
 
 **Fuko\\Masked** is a small PHP library for masking sensitive data: it replace blacklisted elements with their redacted values.
 
