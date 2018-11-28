@@ -306,6 +306,12 @@ class Protect
 
 			return $var;
 		} else
+		if (is_object($var))
+		{
+			return self::protectScalar(
+				filter_var($var, FILTER_DEFAULT)
+			);
+		} else
 		{
 			return $var;
 		}
