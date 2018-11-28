@@ -1,4 +1,4 @@
-# Fuko\\Masked [![Latest Version](http://img.shields.io/packagist/v/fuko-php/masked.svg)](https://packagist.org/packages/fuko-php/masked) [![GitHub license](https://img.shields.io/github/license/fuko-php/masked.svg)](https://github.com/fuko-php/masked/blob/master/LICENSE)
+# Fuko\\Masked [![Latest Version](http://img.shields.io/packagist/v/fuko-php/masked.svg)](https://packagist.org/packages/fuko-php/masked) [![GitHub license](https://img.shields.io/github/license/fuko-php/masked.svg)](https://github.com/fuko-php/masked/blob/master/LICENSE) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/df4745ccdac246c490dfd243368bd02e)](https://www.codacy.com/app/kktsvetkov/fuko-php.masked?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=fuko-php/masked&amp;utm_campaign=Badge_Grade)
 
 **Fuko\\Masked** is a small PHP library for masking sensitive data: it replace blacklisted elements with their redacted values.
 
