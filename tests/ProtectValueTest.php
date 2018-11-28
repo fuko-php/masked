@@ -3,6 +3,7 @@
 namespace Fuko\Masked\Tests;
 
 use Fuko\Masked\Protect;
+use Fuko\Masked\Redact;
 use PHPUnit\Framework\TestCase;
 
 class ProtectValueTest extends TestCase
@@ -78,5 +79,61 @@ class ProtectValueTest extends TestCase
 				)
 			),
 		);
+	}
+
+	function test_protect_backtrace()
+	{
+		Protect::hideValue($username = 'u53rn4m3');
+		Protect::hideValue($password = 'P422wOrd');
+
+		$d = $this->uno($username, $password);
+		$this->assertBacktrace(
+			var_export(Protect::protect($d), true),
+			$username,
+			$password);
+
+		$d = $this->ichi($username, $password);
+		$this->assertBacktrace(Protect::protect($d), $username, $password);
+	}
+
+	function assertBacktrace($redacted, $username, $password)
+	{
+		$this->assertFalse(
+			strpos($redacted, $username)
+			);
+		$this->assertFalse(
+			strpos($redacted, $password)
+			);
+
+		$this->assertInternalType(
+			'int',
+			strpos($redacted, Redact::redact( $username ))
+			);
+		$this->assertInternalType(
+			'int',
+			strpos($redacted, Redact::redact( $password ))
+			);
+	}
+
+	function uno($username, $password)
+	{
+		return $this->due($username, $password);
+	}
+
+	function due($username, $password)
+	{
+		return debug_backtrace();
+	}
+
+	function ichi($username, $password)
+	{
+		return $this->ni($username, $password);
+	}
+
+	function ni($username, $password)
+	{
+		ob_start();
+		debug_print_backtrace();
+		return ob_get_clean();
 	}
 }
