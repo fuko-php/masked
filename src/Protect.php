@@ -331,7 +331,7 @@ class Protect
 		{
 			self::$hideInputs = array(
 				INPUT_SERVER => array(
-					'PHP_AUTH_PW' => 1
+					'PHP_AUTH_PW' => true
 					),
 				INPUT_POST => array(
 					'password' => true
@@ -344,25 +344,18 @@ class Protect
 		$hideInputValues = array();
 		foreach (self::$hideInputs as $type => $inputs)
 		{
-			$inputArray = array(1);
-			self::_inputArray($type, $inputArray);
-
 			// the input names are the keys
 			//
-			foreach (array_keys($inputs) as $input)
+			foreach (array_keys($inputs) as $name)
 			{
-				if (empty($inputArray[ $input ]))
+				$input = self::_filter_input($type, $name);
+				if (!$input)
 				{
 					continue;
 				}
 
-				if (!is_scalar($inputArray[ $input ]))
-				{
-					continue;
-				}
-
-				$hideInputValues[] = $inputArray[ $input ];
-			}
+				$hideInputValues[] = $input;
+ 			}
 		}
 
 		if (!empty($hideInputValues))
@@ -396,66 +389,74 @@ class Protect
 	}
 
 	/**
-	* Get an input array
-	* @param integer $type
-	* @param array &$inputArray
+	* Gets a specific external variable by name and filter it as a string
+	*
+	* @param integer $type input type, must be one of INPUT_REQUEST,
+	*	INPUT_GET, INPUT_POST, INPUT_COOKIE, INPUT_SESSION,
+	*	INPUT_SERVER or INPUT_ENV
+	* @param string $name name of the input variable to get
+	* @return string
 	*/
-	private static function _inputArray($type, array &$inputArray)
+	private static function _filter_input($type, $name)
 	{
-		if ((INPUT_POST == $type) && !empty($_POST))
+		switch ($type)
 		{
-			$inputArray = $_POST;
-		} else
-		if ((INPUT_GET == $type) && !empty($_GET))
-		{
-			$inputArray = $_GET;
-		} else
-		if ((INPUT_COOKIE == $type) && !empty($_COOKIE))
-		{
-			$inputArray = $_COOKIE;
-		} else
-		if ((INPUT_SESSION == $type) && !empty($_SESSION))
-		{
-			$inputArray = $_SESSION;
-		} else
-		if ((INPUT_SERVER == $type) && !empty($_SERVER))
-		{
-			$inputArray = $_SERVER;
-		} else
-		if ((INPUT_ENV == $type) && !empty($_ENV))
-		{
-			$inputArray = $_ENV;
-		} else
-		if (INPUT_REQUEST == $type)
-		{
-			// collect $_REQUEST yourself since input
-			// arrays might have been changed after the
-			// script has started
-			//
-			static $request_order;
-			if (!$request_order)
-			{
-				$request_order = ini_get('request_order')
-					OR $request_order = 'GP';
-			}
+			case INPUT_ENV :
+				return !empty($_ENV)
+					? self::_filter_var($_ENV, $name)
+					: '';
 
-			$inputArray = array();
-			for ($i = 0; $i < strlen($request_order); $i++)
-			{
-				$inputArray = array_merge(
-					$inputArray,
-					('G' == $request_order[$i]
-						? $_GET
-						: ('P' == $request_order[$i]
-							? $_POST
-							: ('C' == $request_order[$i]
-								? $_COOKIE
-								: array()
-								)
-							)
-						)
-					);
-			}
+			case INPUT_SERVER :
+				return !empty($_SERVER)
+					? self::_filter_var($_SERVER, $name)
+					: '';
+
+			case INPUT_COOKIE :
+				return !empty($_COOKIE)
+					? self::_filter_var($_COOKIE, $name)
+					: '';
+
+			case INPUT_GET :
+				return !empty($_GET)
+					? self::_filter_var($_GET, $name)
+					: '';
+
+			case INPUT_POST :
+				return !empty($_POST)
+					? self::_filter_var($_POST, $name)
+					: '';
+
+			case INPUT_SESSION :
+				return !empty($_SESSION)
+					? self::_filter_var($_SESSION, $name)
+					: '';
+
+			case INPUT_REQUEST :
+				return !empty($_REQUEST)
+					? self::_filter_var($_REQUEST, $name)
+					: '';
+
+			default: return '';
 		}
 	}
-}
+
+	/**
+	* Filters a variable as a string
+	*
+	* @param array $input
+	* @param string $name name of the input variable to get
+	* @return string
+	*/
+	private static function _filter_var(array $input, $name)
+	{
+		if (empty($input[$name]))
+		{
+			return '';
+		}
+
+		return filter_var(
+			$input[$name],
+			FILTER_SANITIZE_STRING
+		);
+	}
+ }
