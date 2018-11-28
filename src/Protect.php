@@ -341,6 +341,9 @@ class Protect
 				INPUT_POST => array(
 					'password' => true
 					),
+				INPUT_ENV => array(
+					'CODACY_PROJECT_TOKEN' => true
+					),
 				);
 		}
 
