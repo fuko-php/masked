@@ -47,7 +47,7 @@ class ProtectHideValuesTest extends TestCase
 			array(null),
 			array(array()),
 			array($_SERVER),
-			array((object) $server),
+			array((object) $_SERVER),
 			array(fopen(__FILE__, 'r')),
 			array(opendir(__DIR__)),
 		);
@@ -72,7 +72,7 @@ class ProtectHideValuesTest extends TestCase
 			array( array(null) ),
 			array( array(array()) ),
 			array( array($_SERVER) ),
-			array( array( (object) $server) ),
+			array( array( (object) $_SERVER) ),
 			array( array( fopen(__FILE__, 'r')) ),
 			array( array( opendir(__DIR__)) ),
 		);

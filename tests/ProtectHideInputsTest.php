@@ -31,6 +31,8 @@ class ProtectHideInputsTest extends TestCase
 			array('incognito', 333),
 			array('OLDPWD', INPUT_ENV),
 			array('USER', INPUT_SERVER),
+
+			array('cipher', ''),
 		);
 	}
 
@@ -42,7 +44,7 @@ class ProtectHideInputsTest extends TestCase
 	*/
 	function test_hideInput_bad($name, $type)
 	{
-		Protect::hideInput($input, $type);
+		Protect::hideInput($name, $type);
 	}
 
 	function provider_hideInput_bad()
@@ -55,7 +57,6 @@ class ProtectHideInputsTest extends TestCase
 			array($this, INPUT_POST),
 
 			array('cipher', null),
-			array('cipher', ''),
 			array('cipher', array()),
 			array('cipher', $this),
 		);

@@ -94,6 +94,7 @@ class setRedactCallbackTest extends TestCase
 	*/
 	function test_setRedactCallback2()
 	{
+		$this->poop();
 		Redact::setRedactCallback(
 			array($this, 'poop')
 			);

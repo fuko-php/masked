@@ -349,7 +349,7 @@ class Protect
 
 			// the input names are the keys
 			//
-			foreach ($inputs as $input => $_)
+			foreach (array_keys($inputs) as $input)
 			{
 				if (empty($inputArray[ $input ]))
 				{
