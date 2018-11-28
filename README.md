@@ -25,14 +25,14 @@ $redacted = Protect::protect($_POST);
 
 $redacted = Protect::protect($_POST);
 print_r($redacted);
-```
-```
+/* ... and the output is
 Array
 (
     [username] => Bob
     [password] => ████████████
     [messages] => The secret key is ████████
 )
+*/
 ```
 
 ## How it works ?
