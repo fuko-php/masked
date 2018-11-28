@@ -45,7 +45,9 @@ Array
 By doing the above, you are going to have redacted content with all the sensitive details blacklisted. You do not need to go looking inside all the dumps you create for passwords or credentials, instead you just register them with `\Fuko\Masked\Protect` and that class will mask them wherever it finds them: strings, arrays, big text dumps. It's that simple. The idea is not to have clumsy and overdressed library, but a simple tool that its job well.
 
 ## Examples
+Here are several example of basic ***Fuko\\Masked*** use cases.
 
+#### Hide Values
 You know where your passwords and credentials are, and you want to blacklist them in any dumps you create. Here's how you would do it:
 ```php
 use \Fuko\Masked\Protect;
@@ -78,6 +80,29 @@ Array
 */
 ```
 
+The sensitive details might be in some nested arrays within the arrays, they are still going to be redacted:
+```php
+use \Fuko\Masked\Protect;
+
+Protect::hideValue($password);
+
+$a = ['b' => ['c' => ['d' => $password]]];
+print_r(Protect::protect($a));
+/* ... and the output is
+Array
+(
+    [b] => Array
+        (
+            [c] => Array
+                (
+                    [d] => ██████
+                )
+        )
+)
+*/
+```
+
+#### Hide Inputs
 At some occasions you know that user-submitted data or other super-global inputs might contain sensitive data. In these cases you do not need to hide the actual value, but you can address the input array instead. In this example we are going to mask the "password" POST value:
 ```php
 use \Fuko\Masked\Protect;
@@ -95,6 +120,49 @@ Array
 */
 ```
 
+#### Working with Objects
+The `\Fuko\Masked\Protect::protect()` only works with strings and arrays. If you need to mask the sensitive data in an object dump, you first create the dump and then feed it to `Protect::protect()`, like this:
+```php
+use \Fuko\Masked\Protect;
+
+Protect::hideValue($password);
+$a = new stdClass;
+$a->b = new stdClass;
+$a->b->c = new stdClass;
+$a->password = $a->b->secret = $a->b->c->d = $password;
+echo Protect::protect(print_r($a, true));
+/* ... and the output is
+stdClass Object
+(
+    [b] => stdClass Object
+        (
+            [c] => stdClass Object
+                (
+                    [d] => ██████████████████
+                )
+            [secret] => ██████████████████
+        )
+    [password] => ██████████████████
+)
+*/
+```
+
+For those classes that have `::__toString()` method implemented, the objects will be cast into strings with that. Here is an example with an exception, and exception classes have that:
+```php
+use \Fuko\Masked\Protect;
+
+Protect::hideValue($password);
+$e = new \Exception('Look, look, his password is ' . $password);
+
+echo Protect::protect($e);
+/* ... and the output is
+Exception: Look, look, his password is ████████ in /tmp/egati-probata.php:123
+Stack trace:
+#0 {main}
+*/
+```
+
+#### Debug Blacklist
 Recently in Laravel 5 there is a [new feature](https://github.com/laravel/framework/pull/21336) added that introduces configuration option ["debug_blacklist"](https://laravel.com/docs/5.7/configuration#hiding-environment-variables-from-debug) for [Whoops](https://github.com/filp/whoops) to hide several sensitive variables. Here's how this can be done with `\Fuko\Masked\Protect` instead:
 
 ```php
