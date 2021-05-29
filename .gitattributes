@@ -1,0 +1,9 @@
+# Enforce Unix newlines
+* text=lf
+
+# Exclude files
+/.gitattributes     export-ignore
+/.github            export-ignore
+/.gitignore         export-ignore
+/phpunit.xml.dist   export-ignore
+/tests              export-ignore
