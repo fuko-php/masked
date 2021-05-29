@@ -32,7 +32,7 @@ class ProtectHideValuesTest extends TestCase
 	* @dataProvider provider_hideValue_bad
 	* @covers Fuko\Masked\Protect::hideValue
 	* @covers Fuko\Masked\Protect::_validateValue
-	* @expectedException PHPUnit_Framework_Error_Warning
+	* @expectedException \PHPUnit\Framework\Error\Warning
 	*/
 	function test_hideValue_bad($value)
 	{
@@ -57,7 +57,7 @@ class ProtectHideValuesTest extends TestCase
 	* @dataProvider provider_hideValues_bad
 	* @covers Fuko\Masked\Protect::hideValues
 	* @covers Fuko\Masked\Protect::_validateValue
-	* @expectedException PHPUnit_Framework_Error_Warning
+	* @expectedException \PHPUnit\Framework\Error\Warning
 	*/
 	function test_hideValues_bad($values)
 	{

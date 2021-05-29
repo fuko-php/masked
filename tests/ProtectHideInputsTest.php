@@ -5,6 +5,11 @@ namespace Fuko\Masked\Tests;
 use Fuko\Masked\Protect;
 use PHPUnit\Framework\TestCase;
 
+use const INPUT_COOKIE;
+use const INPUT_POST;
+use const INPUT_REQUEST;
+use const INPUT_SESSION;
+
 class ProtectHideInputsTest extends TestCase
 {
 	function tearDown()
@@ -40,7 +45,7 @@ class ProtectHideInputsTest extends TestCase
 	* @dataProvider provider_hideInput_bad
 	* @covers Fuko\Masked\Protect::hideInput
 	* @covers Fuko\Masked\Protect::_validateInput
-	* @expectedException PHPUnit_Framework_Error_Warning
+	* @expectedException \PHPUnit\Framework\Error\Warning
 	*/
 	function test_hideInput_bad($name, $type)
 	{
@@ -66,7 +71,7 @@ class ProtectHideInputsTest extends TestCase
 	* @dataProvider provider_hideInputs_bad
 	* @covers Fuko\Masked\Protect::hideInputs
 	* @covers Fuko\Masked\Protect::_validateInput
-	* @expectedException PHPUnit_Framework_Error_Warning
+	* @expectedException \PHPUnit\Framework\Error\Warning
 	*/
 	function test_hideInputs_bad($inputs)
 	{
