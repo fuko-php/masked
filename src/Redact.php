@@ -11,6 +11,20 @@
 
 namespace Fuko\Masked;
 
+use InvalidArgumentException;
+
+use const FILTER_SANITIZE_STRING;
+
+use function abs;
+use function array_unshift;
+use function call_user_func_array;
+use function filter_var;
+use function is_callable;
+use function round;
+use function strlen;
+use function str_repeat;
+use function substr;
+
 /**
 * Masks sensitive data: replaces blacklisted elements with redacted values
 *
@@ -60,7 +74,7 @@ class Redact
 	{
 		if (!is_callable($callback))
 		{
-			throw new \InvalidArgumentException(
+			throw new InvalidArgumentException(
 				'First argument to '
 					. __METHOD__
 					. '() must be a valid callback'
