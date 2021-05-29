@@ -93,7 +93,7 @@ class ValueCollection
 	* @param string $error error message placeholder
 	* @return boolean
 	*/
-	protected function validateValue($value, $error = '%s')
+	protected function validateValue($value, $error)
 	{
 		if (empty($value))
 		{
