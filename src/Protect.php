@@ -21,6 +21,8 @@ use const INPUT_SESSION;
 use const INPUT_REQUEST;
 
 use function array_keys;
+use function define;
+use function defined;
 use function gettype;
 use function filter_var;
 use function in_array;
@@ -32,6 +34,16 @@ use function sprintf;
 use function strpos;
 use function str_replace;
 use function trigger_error;
+
+if (!defined('INPUT_SESSION'))
+{
+	define('INPUT_SESSION', 6);
+}
+
+if (!defined('INPUT_REQUEST'))
+{
+	define('INPUT_REQUEST', 99);
+}
 
 /**
 * Protect sensitive data and redacts it using {@link Fuko\Masked\Redact::redact()}
