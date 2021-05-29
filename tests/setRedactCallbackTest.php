@@ -5,6 +5,8 @@ namespace Fuko\Masked\Tests;
 use Fuko\Masked\Redact;
 use PHPUnit\Framework\TestCase;
 
+use function strlen;
+
 class setRedactCallbackTest extends TestCase
 {
 	function tearDown()
