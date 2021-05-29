@@ -11,6 +11,8 @@
 
 namespace Fuko\Masked;
 
+use Fuko\Masked\ValueCollection;
+
 use const FILTER_SANITIZE_STRING;
 use const E_USER_WARNING;
 use const INPUT_ENV;
@@ -51,19 +53,22 @@ if (!defined('INPUT_REQUEST'))
 *
 * @package Fuko\Masked
 */
-class Protect
+final class Protect
 {
 	/**
-	* @var array collection of values to hide redacting
+	* @var ValueCollection collection of values to hide redacting
 	*/
-	private static $hideValues = array();
+	private static $hideValueCollection;
 
 	/**
 	* Clear accumulated values to hide
 	*/
-	public static function clearValues()
+	static function clearValues()
 	{
-		self::$hideValues = array();
+		if (!empty(self::$hideValueCollection))
+		{
+			self::$hideValueCollection->clearValues();
+		}
 	}
 
 	/**
@@ -72,21 +77,11 @@ class Protect
 	* @param array $values array with values of scalars or
 	*	objects that have __toString() methods
 	*/
-	public static function hideValues(array $values)
+	static function hideValues(array $values)
 	{
-		foreach ($values as $k => $value)
-		{
-			if (self::_validateValue(
-				$value, __METHOD__
-					. '() received %s as a hide value (key "'
-					. $k . '" of the $values argument)'))
-			{
-				if (!in_array($value, self::$hideValues))
-				{
-					self::$hideValues[] = $value;
-				}
-			}
-		}
+		(self::$hideValueCollection
+			?? (self::$hideValueCollection =
+				new ValueCollection))->hideValues($values);
 	}
 
 	/**
@@ -97,69 +92,11 @@ class Protect
 	* @return boolean|NULL TRUE if added, FALSE if wrong
 	*	type, NULL if already added
 	*/
-	public static function hideValue($value)
+	static function hideValue($value)
 	{
-		if (!self::_validateValue(
-			$value,
-			__METHOD__ . '() received %s as a hide value')
-			)
-		{
-			return false;
-		}
-
-		if (in_array($value, self::$hideValues))
-		{
-			return null;
-		}
-
-		self::$hideValues[] = $value;
-		return true;
-	}
-
-	/**
-	* Validate $value:
-	* 	- check if it is empty,
-	*	- if it is string or if an object with __toString() method
-	* @param mixed $value
-	* @param string $error error message placeholder
-	* @return boolean
-	*/
-	private static function _validateValue($value, $error = '%s')
-	{
-		if (empty($value))
-		{
-			$wrongType = 'an empty value';
-		} else
-		if (is_scalar($value))
-		{
-			$wrongType = '';
-		} else
-		if (is_array($value))
-		{
-			$wrongType = 'an array';
-		} else
-		if (is_object($value))
-		{
-			$wrongType = !is_callable(array($value, '__toString'))
-				? 'an object'
-				: '';
-		} else
-		{
-			/* resources ? */
-			$wrongType = 'unexpected type (' . (string) $value . ')';
-		}
-
-		if ($wrongType)
-		{
-			trigger_error(
-				sprintf($error, $wrongType),
-				E_USER_WARNING
-				);
-
-			return false;
-		}
-
-		return true;
+		return (self::$hideValueCollection
+			?? (self::$hideValueCollection =
+				new ValueCollection))->hideValue($value);
 	}
 
 	/////////////////////////////////////////////////////////////////////
@@ -362,9 +299,12 @@ class Protect
 	{
 		// hide values
 		//
-		if (!empty(self::$hideValues))
+		if (!empty(self::$hideValueCollection))
 		{
-			$var = self::_redact($var, self::$hideValues);
+			if ($hideValues = self::$hideValueCollection->getValues())
+			{
+				$var = self::_redact($var, $hideValues);
+			}
 		}
 
 		// default hideInputs values ?
