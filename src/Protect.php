@@ -11,6 +11,28 @@
 
 namespace Fuko\Masked;
 
+use const FILTER_SANITIZE_STRING;
+use const INPUT_ENV;
+use const INPUT_SERVER;
+use const INPUT_COOKIE;
+use const INPUT_GET;
+use const INPUT_POST;
+use const INPUT_SESSION;
+use const INPUT_REQUEST;
+
+use function array_keys;
+use function gettype;
+use function filter_var;
+use function in_array;
+use function is_array;
+use function is_callable;
+use function is_object;
+use function is_scalar;
+use function sprintf;
+use function strpos;
+use function str_replace;
+use function trigger_error;
+
 /**
 * Protect sensitive data and redacts it using {@link Fuko\Masked\Redact::redact()}
 *
@@ -340,9 +362,6 @@ class Protect
 					),
 				INPUT_POST => array(
 					'password' => true
-					),
-				INPUT_ENV => array(
-					'CODACY_PROJECT_TOKEN' => true
 					),
 				);
 		}
