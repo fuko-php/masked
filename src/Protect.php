@@ -11,42 +11,17 @@
 
 namespace Fuko\Masked;
 
+use Fuko\Masked\InputCollection;
 use Fuko\Masked\ValueCollection;
 
-use const FILTER_SANITIZE_STRING;
-use const E_USER_WARNING;
-use const INPUT_ENV;
-use const INPUT_SERVER;
-use const INPUT_COOKIE;
-use const INPUT_GET;
-use const INPUT_POST;
-use const INPUT_SESSION;
-use const INPUT_REQUEST;
+use const FILTER_DEFAULT;
 
-use function array_keys;
-use function define;
-use function defined;
-use function gettype;
 use function filter_var;
-use function in_array;
 use function is_array;
-use function is_callable;
 use function is_object;
 use function is_scalar;
-use function sprintf;
 use function strpos;
 use function str_replace;
-use function trigger_error;
-
-if (!defined('INPUT_SESSION'))
-{
-	define('INPUT_SESSION', 6);
-}
-
-if (!defined('INPUT_REQUEST'))
-{
-	define('INPUT_REQUEST', 99);
-}
 
 /**
 * Protect sensitive data and redacts it using {@link Fuko\Masked\Redact::redact()}
@@ -102,17 +77,20 @@ final class Protect
 	/////////////////////////////////////////////////////////////////////
 
 	/**
-	* @var array collection of inputs for scanning to find
+	* @var InputCollection collection of inputs for scanning to find
 	*	values for redacting
 	*/
-	private static $hideInputs = array();
+	private static $hideInputCollection;
 
 	/**
 	* Clear accumulated inputs to hide
 	*/
-	public static function clearInputs()
+	static function clearInputs()
 	{
-		self::$hideInputs = array();
+		if (!empty(self::$hideInputCollection))
+		{
+			self::$hideInputCollection->clearInputs();
+		}
 	}
 
 	/**
@@ -123,48 +101,11 @@ final class Protect
 	*	INPUT_SERVER, INPUT_ENV), array values are arrays with
 	*	input names
 	*/
-	public static function hideInputs(array $inputs)
+	static function hideInputs(array $inputs)
 	{
-		foreach ($inputs as $type => $names)
-		{
-			if (empty($names))
-			{
-				trigger_error( __METHOD__
-					. '() empty input names for "'
-					. $type . '" input type',
-					E_USER_WARNING
-					);
-				continue;
-			}
-
-			if (is_scalar($names))
-			{
-				$names = array(
-					$names
-					);
-			}
-
-			if (!is_array($names))
-			{
-				trigger_error( __METHOD__
-					. '() input names must be string or array, '
-					. gettype($names) . ' provided instead',
-					E_USER_WARNING
-					);
-				continue;
-			}
-
-			foreach ($names as $name)
-			{
-				if (self::_validateInput($name, $type, __METHOD__))
-				{
-					if (!isset(self::$hideInputs[$type][$name]))
-					{
-						self::$hideInputs[$type][$name] = true;
-					}
-				}
-			}
-		}
+		(self::$hideInputCollection
+			?? (self::$hideInputCollection =
+				new InputCollection))->hideInputs($inputs);
 	}
 
 	/**
@@ -178,79 +119,11 @@ final class Protect
 	* @return boolean|NULL TRUE if added, FALSE if wrong
 	*	name or type, NULL if already added
 	*/
-	public static function hideInput($name, $type = INPUT_REQUEST)
+	static function hideInput($name, $type = INPUT_REQUEST)
 	{
-		if (!self::_validateInput($name, $type, __METHOD__))
-		{
-			return false;
-		}
-
-		if (isset(self::$hideInputs[$type][$name]))
-		{
-			return null;
-		}
-
-		return self::$hideInputs[$type][$name] = true;
-	}
-
-	/**
-	* Validates input:
-	*	- if $name is empty
-	*	- if $name is scalar
-	*	- if $type is scalar
-	*	- if $type is one of these: INPUT_REQUEST,
-	*		INPUT_GET, INPUT_POST, INPUT_COOKIE,
-	*		INPUT_SESSION, INPUT_SERVER, INPUT_ENV
-	* @param string $name
-	* @param integer $type
-	* @param string $method method to use to report the validation errors
-	* @return boolean
-	*/
-	private static function _validateInput($name, &$type, $method)
-	{
-		if (empty($name))
-		{
-			trigger_error(
-				$method . '() $name argument is empty',
-				E_USER_WARNING
-				);
-			return false;
-		}
-
-		if (!is_scalar($name))
-		{
-			trigger_error(
-				$method . '() $name argument is not scalar, it is '
-					. gettype($name),
-				E_USER_WARNING
-				);
-			return false;
-		}
-
-		if (!is_scalar($type))
-		{
-			trigger_error(
-				$method . '() $type argument is not scalar, it is '
-					. gettype($type),
-				E_USER_WARNING
-				);
-			return false;
-		}
-
-		$type = (int) $type;
-		if (!in_array($type, array(
-			INPUT_REQUEST,
-			INPUT_GET,
-			INPUT_POST,
-			INPUT_COOKIE,
-			INPUT_SESSION,
-			INPUT_SERVER,
-			INPUT_ENV)))
-		{
-			$type = INPUT_REQUEST;
-		}
-
-		return true;
+		return (self::$hideInputCollection
+			?? (self::$hideInputCollection =
+				new InputCollection))->hideInput($name, $type);
 	}
 
 	/////////////////////////////////////////////////////////////////////
@@ -263,7 +136,7 @@ final class Protect
 	*	will be returned as empty strings
 	* @return string|array
 	*/
-	public static function protect($var)
+	static function protect($var)
 	{
 		if (is_scalar($var))
 		{
@@ -295,7 +168,7 @@ final class Protect
 	* @param string $var
 	* @return string
 	*/
-	public static function protectScalar($var)
+	static function protectScalar($var)
 	{
 		// hide values
 		//
@@ -307,42 +180,16 @@ final class Protect
 			}
 		}
 
-		// default hideInputs values ?
-		//
-		if (empty(self::$hideInputs))
-		{
-			self::$hideInputs = array(
-				INPUT_SERVER => array(
-					'PHP_AUTH_PW' => true
-					),
-				INPUT_POST => array(
-					'password' => true
-					),
-				);
-		}
-
 		// hide inputs
 		//
 		$hideInputValues = array();
-		foreach (self::$hideInputs as $type => $inputs)
+		if (!empty(self::$hideInputCollection))
 		{
-			// the input names are the keys
-			//
-			foreach (array_keys($inputs) as $name)
+			$hideInputValues = self::$hideInputCollection->getInputsValues();
+			if (!empty($hideInputValues))
 			{
-				$input = self::_filter_input($type, $name);
-				if (!$input)
-				{
-					continue;
-				}
-
-				$hideInputValues[] = $input;
- 			}
-		}
-
-		if (!empty($hideInputValues))
-		{
-			$var = self::_redact($var, $hideInputValues);
+				$var = self::_redact($var, $hideInputValues);
+			}
 		}
 
 		return $var;
@@ -369,76 +216,4 @@ final class Protect
 
 		return $var;
 	}
-
-	/**
-	* Gets a specific external variable by name and filter it as a string
-	*
-	* @param integer $type input type, must be one of INPUT_REQUEST,
-	*	INPUT_GET, INPUT_POST, INPUT_COOKIE, INPUT_SESSION,
-	*	INPUT_SERVER or INPUT_ENV
-	* @param string $name name of the input variable to get
-	* @return string
-	*/
-	private static function _filter_input($type, $name)
-	{
-		switch ($type)
-		{
-			case INPUT_ENV :
-				return !empty($_ENV)
-					? self::_filter_var($_ENV, $name)
-					: '';
-
-			case INPUT_SERVER :
-				return !empty($_SERVER)
-					? self::_filter_var($_SERVER, $name)
-					: '';
-
-			case INPUT_COOKIE :
-				return !empty($_COOKIE)
-					? self::_filter_var($_COOKIE, $name)
-					: '';
-
-			case INPUT_GET :
-				return !empty($_GET)
-					? self::_filter_var($_GET, $name)
-					: '';
-
-			case INPUT_POST :
-				return !empty($_POST)
-					? self::_filter_var($_POST, $name)
-					: '';
-
-			case INPUT_SESSION :
-				return !empty($_SESSION)
-					? self::_filter_var($_SESSION, $name)
-					: '';
-
-			case INPUT_REQUEST :
-				return !empty($_REQUEST)
-					? self::_filter_var($_REQUEST, $name)
-					: '';
-
-			default: return '';
-		}
-	}
-
-	/**
-	* Filters a variable as a string
-	*
-	* @param array $input
-	* @param string $name name of the input variable to get
-	* @return string
-	*/
-	private static function _filter_var(array $input, $name)
-	{
-		if (empty($input[$name]))
-		{
-			return '';
-		}
-
-		return filter_var(
-			$input[$name],
-			FILTER_SANITIZE_STRING
-		);
-	}
- }
+}
