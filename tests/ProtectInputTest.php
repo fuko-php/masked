@@ -15,7 +15,7 @@ use function var_export;
 
 class ProtectInputTest extends TestCase
 {
-	function tearDown()
+	function tearDown(): void
 	{
 		Protect::clearInputs();
 	}

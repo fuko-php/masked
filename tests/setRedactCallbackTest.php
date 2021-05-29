@@ -9,7 +9,7 @@ use function strlen;
 
 class setRedactCallbackTest extends TestCase
 {
-	function tearDown()
+	function tearDown(): void
 	{
 		Redact::setRedactCallback(
 			array(Redact::class, 'disguise'),

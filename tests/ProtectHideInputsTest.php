@@ -12,7 +12,7 @@ use const INPUT_SESSION;
 
 class ProtectHideInputsTest extends TestCase
 {
-	function tearDown()
+	function tearDown(): void
 	{
 		Protect::clearInputs();
 	}

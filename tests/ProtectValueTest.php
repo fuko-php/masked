@@ -8,7 +8,7 @@ use PHPUnit\Framework\TestCase;
 
 class ProtectValueTest extends TestCase
 {
-	function tearDown()
+	function tearDown(): void
 	{
 		Protect::clearValues();
 	}

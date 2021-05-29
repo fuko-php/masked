@@ -7,7 +7,7 @@ use PHPUnit\Framework\TestCase;
 
 class ProtectHideValuesTest extends TestCase
 {
-	function tearDown()
+	function tearDown(): void
 	{
 		Protect::clearValues();
 	}
@@ -23,7 +23,7 @@ class ProtectHideValuesTest extends TestCase
 		$this->assertTrue(Protect::hideValue($this));
 	}
 
-	function __toString()
+	function __toString(): string
 	{
 		return self::class;
 	}
