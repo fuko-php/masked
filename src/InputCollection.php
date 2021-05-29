@@ -56,7 +56,7 @@ class InputCollection
 	/**
 	* @var array default inputs to scan
 	*/
-	const default_inputs = array(
+	const DEFAULT_INPUTS = array(
 		INPUT_SERVER => array(
 			'PHP_AUTH_PW' => true
 			),
@@ -68,14 +68,14 @@ class InputCollection
 	/**
 	* @var array collection of inputs for scanning to find values for redacting
 	*/
-	protected $hideInputs = self::default_inputs;
+	protected $hideInputs = self::DEFAULT_INPUTS;
 
 	/**
 	* Clear accumulated inputs to hide
 	*/
 	function clearInputs()
 	{
-		$this->hideInputs = self::default_inputs;
+		$this->hideInputs = self::DEFAULT_INPUTS;
 	}
 
 	/**
