@@ -92,8 +92,8 @@ class ProtectValueTest extends TestCase
 			$username,
 			$password);
 
-		$d = $this->ichi($username, $password);
-		$this->assertBacktrace(Protect::protect($d), $username, $password);
+		$dummy = $this->ichi($username, $password);
+		$this->assertBacktrace(Protect::protect($dummy), $username, $password);
 	}
 
 	function assertBacktrace($redacted, $username, $password)

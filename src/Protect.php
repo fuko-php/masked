@@ -12,6 +12,7 @@
 namespace Fuko\Masked;
 
 use const FILTER_SANITIZE_STRING;
+use const E_USER_WARNING;
 use const INPUT_ENV;
 use const INPUT_SERVER;
 use const INPUT_COOKIE;
@@ -319,6 +320,7 @@ class Protect
 
 	/**
 	* Protects a variable by replacing sensitive data inside it
+	*
 	* @param mixed $var only strings and arrays will be processed,
 	*	objects will be "stringified", other types (resources?)
 	*	will be returned as empty strings
@@ -352,6 +354,7 @@ class Protect
 
 	/**
 	* Protects a scalar value by replacing sensitive data inside it
+	*
 	* @param string $var
 	* @return string
 	*/
