@@ -92,7 +92,7 @@ class ProtectValueTest extends TestCase
 			$username,
 			$password);
 
-		$dummy = $this->ichi($username, $password);
+		$dummy = $this->edno($username, $password);
 		$this->assertBacktrace(Protect::protect($dummy), $username, $password);
 	}
 
@@ -124,12 +124,12 @@ class ProtectValueTest extends TestCase
 		return debug_backtrace();
 	}
 
-	function ichi($username, $password)
+	function edno($username, $password)
 	{
-		return $this->ni($username, $password);
+		return $this->dve($username, $password);
 	}
 
-	function ni($username, $password)
+	function dve($username, $password)
 	{
 		unset($username, $password);
 		ob_start();
