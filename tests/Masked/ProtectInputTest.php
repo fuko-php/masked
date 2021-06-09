@@ -37,8 +37,7 @@ class ProtectInputTest extends TestCase
 		$this->assertFalse(
 			strpos($redacted, $input[$name])
 			);
-		$this->assertInternalType(
-			'int',
+		$this->assertIsInt(
 			strpos($redacted, Redact::redact( $input[$name] ))
 			);
 	}
