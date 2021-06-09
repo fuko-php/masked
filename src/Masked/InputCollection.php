@@ -115,7 +115,6 @@ class InputCollection
 		return $hideInputValues;
 	}
 
-
 	/**
 	* Gets a specific external variable by name and filter it as a string
 	*
