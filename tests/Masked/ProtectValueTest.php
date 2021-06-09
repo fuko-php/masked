@@ -86,9 +86,9 @@ class ProtectValueTest extends TestCase
 		Protect::hideValue($username = 'u53rn4m3');
 		Protect::hideValue($password = 'P422wOrd');
 
-		$d = $this->uno($username, $password);
+		$dummy = $this->uno($username, $password);
 		$this->assertBacktrace(
-			var_export(Protect::protect($d), true),
+			var_export(Protect::protect($dummy), true),
 			$username,
 			$password);
 
@@ -105,12 +105,10 @@ class ProtectValueTest extends TestCase
 			strpos($redacted, $password)
 			);
 
-		$this->assertInternalType(
-			'int',
+		$this->assertIsInt(
 			strpos($redacted, Redact::redact( $username ))
 			);
-		$this->assertInternalType(
-			'int',
+		$this->assertIsInt(
 			strpos($redacted, Redact::redact( $password ))
 			);
 	}
