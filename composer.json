@@ -18,7 +18,7 @@
 
 	"autoload": {
 		"psr-4": {
-			"Fuko\\Masked\\": "src/"
+			"Fuko\\Masked\\": "src/Masked/"
 		}
 	},
 
@@ -28,7 +28,7 @@
 
         "autoload-dev": {
 		"psr-4": {
-			"Fuko\\Masked\\Tests\\": "tests/"
+			"Fuko\\Masked\\Tests\\": "tests/Masked/"
 		}
         }
 }
