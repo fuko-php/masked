@@ -4,11 +4,15 @@ namespace Fuko\Masked\Tests;
 
 use Fuko\Masked\Protect;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Error\Warning;
 
 use const INPUT_COOKIE;
 use const INPUT_POST;
 use const INPUT_REQUEST;
 use const INPUT_SESSION;
+
+use function fopen;
+use function opendir;
 
 class ProtectHideInputsTest extends TestCase
 {
@@ -41,54 +45,170 @@ class ProtectHideInputsTest extends TestCase
 	}
 
 	/**
-	* @dataProvider provider_hideInput_bad
 	* @covers Fuko\Masked\Protect::hideInput
-	* @expectedException \PHPUnit\Framework\Error\Warning
 	*/
-	function test_hideInput_bad($name, $type)
+	function test_hideInput_withEmptyName()
 	{
-		Protect::hideInput($name, $type);
-	}
-
-	function provider_hideInput_bad()
-	{
-		return array(
-
-			array('', INPUT_SESSION),
-			array(array(), INPUT_REQUEST),
-			array(null, INPUT_COOKIE),
-			array($this, INPUT_POST),
-
-			array('cipher', null),
-			array('cipher', array()),
-			array('cipher', $this),
-		);
+		$this->expectException(Warning::class);
+		$this->expectExceptionMessage(
+			'Fuko\Masked\Protect::hideInput() $name argument is empty'
+			);
+		Protect::hideInput('', INPUT_SESSION);
 	}
 
 	/**
-	* @dataProvider provider_hideInputs_bad
-	* @covers Fuko\Masked\Protect::hideInputs
-	* @expectedException \PHPUnit\Framework\Error\Warning
+	* @covers Fuko\Masked\Protect::hideInput
 	*/
-	function test_hideInputs_bad($inputs)
+	function test_hideInput_withEmptyArray()
 	{
-		Protect::hideInputs( $inputs );
+		$this->expectException(Warning::class);
+		$this->expectExceptionMessage(
+			'Fuko\Masked\Protect::hideInput() $name argument is empty'
+			);
+		Protect::hideInput(array(), INPUT_REQUEST);
 	}
 
-	function provider_hideInputs_bad()
+	/**
+	* @covers Fuko\Masked\Protect::hideInput
+	*/
+	function test_hideInput_withNull()
 	{
-		return array(
-			array( array( 44 => null ) ),
-			array( array( null ) ),
-			array( array( '' ) ),
+		$this->expectException(Warning::class);
+		$this->expectExceptionMessage(
+			'Fuko\Masked\Protect::hideInput() $name argument is empty'
+			);
+		Protect::hideInput(null, INPUT_COOKIE);
+	}
 
-			array( array( 33 => (object) $_SERVER ) ),
-			array( array( 22 => fopen(__FILE__, 'r') ) ),
-			array( array( 22 => opendir(__DIR__) ) ),
+	/**
+	* @covers Fuko\Masked\Protect::hideInput
+	*/
+	function test_hideInput_withObject()
+	{
+		$this->expectException(Warning::class);
+		$this->expectExceptionMessage(
+			'Fuko\Masked\Protect::hideInput() $name argument is not scalar, it is object'
+			);
+		Protect::hideInput($this, INPUT_POST);
+	}
 
-			array( array( 33 => array( (object) $_SERVER ) ) ),
-			array( array( 22 => array( fopen(__FILE__, 'r') ) ) ),
-			array( array( 22 => array( opendir(__DIR__) ) ) ),
-		);
+	/**
+	* @covers Fuko\Masked\Protect::hideInput
+	*/
+	function test_hideInput_withNullType()
+	{
+		$this->expectException(Warning::class);
+		$this->expectExceptionMessage(
+			'Fuko\Masked\Protect::hideInput() $type argument is not scalar, it is NULL'
+			);
+		Protect::hideInput('cipher', null);
+	}
+
+	/**
+	* @covers Fuko\Masked\Protect::hideInput
+	*/
+	function test_hideInput_withArrayType()
+	{
+		$this->expectException(Warning::class);
+		$this->expectExceptionMessage(
+			'Fuko\Masked\Protect::hideInput() $type argument is not scalar, it is array'
+			);
+		Protect::hideInput('cipher', array());
+	}
+
+	/**
+	* @covers Fuko\Masked\Protect::hideInput
+	*/
+	function test_hideInput_withObectType()
+	{
+		$this->expectException(Warning::class);
+		$this->expectExceptionMessage(
+			'Fuko\Masked\Protect::hideInput() $type argument is not scalar, it is object'
+			);
+		Protect::hideInput('cipher', $this);
+	}
+
+	/**
+	* @covers Fuko\Masked\Protect::hideInputs
+	*/
+	function test_hideInputs_withNullName()
+	{
+		$this->expectException(Warning::class);
+		$this->expectExceptionMessage(
+			'Fuko\Masked\Protect::hideInputs() empty input names for "44" input type'
+			);
+		Protect::hideInputs( array( 44 => null ) );
+	}
+
+	/**
+	* @covers Fuko\Masked\Protect::hideInputs
+	*/
+	function test_hideInputs_withNullInput()
+	{
+		$this->expectException(Warning::class);
+		$this->expectExceptionMessage(
+			'Fuko\Masked\Protect::hideInputs() empty input names for "0" input type'
+			);
+		Protect::hideInputs( array( null ) );
+	}
+
+	/**
+	* @covers Fuko\Masked\Protect::hideInputs
+	*/
+	function test_hideInputs_withEmptyString()
+	{
+		$this->expectException(Warning::class);
+		$this->expectExceptionMessage(
+			'Fuko\Masked\Protect::hideInputs() empty input names for "0" input type'
+			);
+		Protect::hideInputs( array( '' ) );
+	}
+
+	/**
+	* @covers Fuko\Masked\Protect::hideInputs
+	*/
+	function test_hideInputs_withObjectInput()
+	{
+		$this->expectException(Warning::class);
+		$this->expectExceptionMessage(
+			'Fuko\Masked\Protect::hideInputs() input names must be string or array, object provided instead'
+			);
+		Protect::hideInputs( array( 33 => (object) $_SERVER ) );
+	}
+
+	/**
+	* @covers Fuko\Masked\Protect::hideInputs
+	*/
+	function test_hideInputs_withOtherInput()
+	{
+		$this->expectException(Warning::class);
+		$this->expectExceptionMessage(
+			'Fuko\Masked\Protect::hideInputs() input names must be string or array, resource provided instead'
+			);
+		Protect::hideInputs( array(22 => fopen(__FILE__, 'r') ) );
+	}
+
+	/**
+	* @covers Fuko\Masked\Protect::hideInputs
+	*/
+	function test_hideInputs_withObjectInputName()
+	{
+		$this->expectException(Warning::class);
+		$this->expectExceptionMessage(
+			'Fuko\Masked\Protect::hideInputs() $name argument is not scalar, it is object'
+			);
+		Protect::hideInputs( array( 33 => array( (object) $_SERVER ) ) );
+	}
+
+	/**
+	* @covers Fuko\Masked\Protect::hideInputs
+	*/
+	function test_hideInputs_withOtherInputName()
+	{
+		$this->expectException(Warning::class);
+		$this->expectExceptionMessage(
+			'Fuko\Masked\Protect::hideInputs() $name argument is not scalar, it is resource'
+			);
+		Protect::hideInputs( array( 22 => array( opendir(__DIR__) ) ) );
 	}
 }

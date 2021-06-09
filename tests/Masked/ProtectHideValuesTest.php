@@ -4,6 +4,7 @@ namespace Fuko\Masked\Tests;
 
 use Fuko\Masked\Protect;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Error\Warning;
 
 class ProtectHideValuesTest extends TestCase
 {
@@ -29,50 +30,156 @@ class ProtectHideValuesTest extends TestCase
 	}
 
 	/**
-	* @dataProvider provider_hideValue_bad
+	* @dataProvider provider_hideValue_empty
 	* @covers Fuko\Masked\Protect::hideValue
-	* @expectedException \PHPUnit\Framework\Error\Warning
 	*/
-	function test_hideValue_bad($value)
+	function test_hideValue_empty($value)
 	{
+		$this->expectException(Warning::class);
+		$this->expectExceptionMessage(
+			'Fuko\Masked\Protect::hideValue() received an empty value as a hide value'
+			);
+
 		Protect::hideValue($value);
 	}
 
-	function provider_hideValue_bad()
+	function provider_hideValue_empty()
 	{
 		return array(
 			array(''),
 			array(0),
 			array(null),
 			array(array()),
-			array($_SERVER),
-			array((object) $_SERVER),
-			array(fopen(__FILE__, 'r')),
-			array(opendir(__DIR__)),
 		);
 	}
 
 	/**
-	* @dataProvider provider_hideValues_bad
-	* @covers Fuko\Masked\Protect::hideValues
-	* @expectedException \PHPUnit\Framework\Error\Warning
+	* @covers Fuko\Masked\Protect::hideValue
 	*/
-	function test_hideValues_bad($values)
+	function test_hideValue_array()
 	{
-		Protect::hideValues( $values );
+		$this->expectException(Warning::class);
+		$this->expectExceptionMessage(
+			'Fuko\Masked\Protect::hideValue() received an array as a hide value'
+			);
+
+		Protect::hideValue($_SERVER);
 	}
 
-	function provider_hideValues_bad()
+	/**
+	* @covers Fuko\Masked\Protect::hideValue
+	*/
+	function test_hideValue_object()
 	{
-		return array(
-			array( array('password', '') ),
-			array( array(1,2,3,4,0) ),
-			array( array(null) ),
-			array( array(array()) ),
-			array( array($_SERVER) ),
-			array( array( (object) $_SERVER) ),
-			array( array( fopen(__FILE__, 'r')) ),
-			array( array( opendir(__DIR__)) ),
-		);
+		$this->expectException(Warning::class);
+		$this->expectExceptionMessage(
+			'Fuko\Masked\Protect::hideValue() received an object as a hide value'
+			);
+
+		Protect::hideValue((object) $_SERVER);
+	}
+
+	/**
+	* @covers Fuko\Masked\Protect::hideValue
+	*/
+	function test_hideValue_other()
+	{
+		$this->expectException(Warning::class);
+		$this->expectExceptionMessageRegExp(
+			'~^Fuko\\\\Masked\\\\Protect\:\:hideValue\(\) received unexpected type \(Resource id #\d+\) as a hide value$~'
+			);
+
+		Protect::hideValue(opendir(__DIR__));
+	}
+
+	/**
+	* @covers Fuko\Masked\Protect::hideValues
+	*/
+	function test_hideValues_emptyString()
+	{
+		$this->expectException(Warning::class);
+		$this->expectExceptionMessage(
+			'Fuko\Masked\Protect::hideValues() received an empty value as a hide value (key "1" of the $values argument)'
+			);
+
+		Protect::hideValues( array('password', '') );
+	}
+
+	/**
+	* @covers Fuko\Masked\Protect::hideValues
+	*/
+	function test_hideValues_emptyArray()
+	{
+		$this->expectException(Warning::class);
+		$this->expectExceptionMessage(
+			'Fuko\Masked\Protect::hideValues() received an empty value as a hide value (key "0" of the $values argument)'
+			);
+
+		Protect::hideValues( array(array()) );
+	}
+
+	/**
+	* @covers Fuko\Masked\Protect::hideValues
+	*/
+	function test_hideValues_Zero()
+	{
+		$this->expectException(Warning::class);
+		$this->expectExceptionMessage(
+			'Fuko\Masked\Protect::hideValues() received an empty value as a hide value (key "4" of the $values argument)'
+			);
+
+		Protect::hideValues( array(1,2,3,4,0) );
+	}
+
+	/**
+	* @covers Fuko\Masked\Protect::hideValues
+	*/
+	function test_hideValues_Null()
+	{
+		$this->expectException(Warning::class);
+		$this->expectExceptionMessage(
+			'Fuko\Masked\Protect::hideValues() received an empty value as a hide value (key "0" of the $values argument)'
+			);
+
+		Protect::hideValues( array(null, 'null') );
+	}
+
+	/**
+	* @covers Fuko\Masked\Protect::hideValues
+	*/
+	function test_hideValues_withArray()
+	{
+		$this->expectException(Warning::class);
+		$this->expectExceptionMessage(
+			'Fuko\Masked\Protect::hideValues() received an array as a hide value (key "0" of the $values argument)'
+			);
+
+		Protect::hideValues( array($_SERVER) );
+	}
+
+	/**
+	* @covers Fuko\Masked\Protect::hideValues
+	*/
+	function test_hideValues_withObject()
+	{
+		$this->expectException(Warning::class);
+		$this->expectExceptionMessage(
+			'Fuko\Masked\Protect::hideValues() received an object as a hide value (key "0" of the $values argument)'
+			);
+
+		Protect::hideValues( array( (object) $_SERVER) );
+	}
+
+	/**
+	* @covers Fuko\Masked\Protect::hideValues
+	*/
+	function test_hideValues_withOther()
+	{
+		$this->expectException(Warning::class);
+		$this->expectExceptionMessageRegExp(
+			'~^Fuko\\\\Masked\\\\Protect\:\:hideValues\(\) received unexpected type \(Resource id #\d+\) as a hide value \(key "0" of the \$values argument\)$~'
+			);
+
+		Protect::hideValues(array(opendir(__DIR__)));
 	}
 }

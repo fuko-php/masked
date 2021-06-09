@@ -4,6 +4,7 @@ namespace Fuko\Masked\Tests;
 
 use Fuko\Masked\Redact;
 use PHPUnit\Framework\TestCase;
+use InvalidArgumentException;
 
 use function strlen;
 
@@ -79,10 +80,14 @@ class setRedactCallbackTest extends TestCase
 
 	/**
 	* @covers Fuko\Masked\Redact::setRedactCallback
-	* @expectedException InvalidArgumentException
 	*/
-	function test_setRedactCallback1()
+	function test_setRedactUnknownCallback()
 	{
+		$this->expectException(InvalidArgumentException::class);
+		$this->expectExceptionMessage(
+			'First argument to Fuko\Masked\Redact::setRedactCallback() must be a valid callback'
+			);
+
 		Redact::setRedactCallback(
 			array($this, '_')
 			);
@@ -92,10 +97,14 @@ class setRedactCallbackTest extends TestCase
 
 	/**
 	* @covers Fuko\Masked\Redact::setRedactCallback
-	* @expectedException InvalidArgumentException
 	*/
-	function test_setRedactCallback2()
+	function test_setRedactPrivateCallback()
 	{
+		$this->expectException(InvalidArgumentException::class);
+		$this->expectExceptionMessage(
+			'First argument to Fuko\Masked\Redact::setRedactCallback() must be a valid callback'
+			);
+
 		$this->poop();
 		Redact::setRedactCallback(
 			array($this, 'poop')

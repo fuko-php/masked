@@ -122,6 +122,7 @@ class ProtectValueTest extends TestCase
 
 	function due($username, $password)
 	{
+		unset($username, $password);
 		return debug_backtrace();
 	}
 
@@ -132,6 +133,7 @@ class ProtectValueTest extends TestCase
 
 	function ni($username, $password)
 	{
+		unset($username, $password);
 		ob_start();
 		debug_print_backtrace();
 		return ob_get_clean();

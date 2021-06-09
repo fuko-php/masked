@@ -4,45 +4,54 @@ namespace Fuko\Masked\Tests;
 
 use Fuko\Masked\ValueCollection;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Error\Warning;
 
 class ValueCollectionTest extends TestCase
 {
 	/**
 	* @covers Fuko\Masked\ValueCollection::hideValue()
-	* @expectedException \PHPUnit\Framework\Error\Warning
 	*/
 	function testHideEmptyValue()
 	{
+		$this->expectException(Warning::class);
+		$this->expectExceptionMessage('Fuko\Masked\Protect::hideValue() received an empty value as a hide value');
+
 		$c = new ValueCollection;
 		$c->hideValue([]);
 	}
 
 	/**
 	* @covers Fuko\Masked\ValueCollection::hideValue()
-	* @expectedException \PHPUnit\Framework\Error\Warning
 	*/
 	function testHideEmptyString()
 	{
+		$this->expectException(Warning::class);
+		$this->expectExceptionMessage('Fuko\Masked\Protect::hideValue() received an empty value as a hide value');
+
 		$c = new ValueCollection;
 		$c->hideValue('');
 	}
 
 	/**
 	* @covers Fuko\Masked\ValueCollection::hideValue()
-	* @expectedException \PHPUnit\Framework\Error\Warning
 	*/
 	function testHideArray()
 	{
+		$this->expectException(Warning::class);
+		$this->expectExceptionMessage('Fuko\Masked\Protect::hideValue() received an array as a hide value');
+
 		$c = new ValueCollection;
 		$c->hideValue([123, 234]);
 	}
 
 	/**
 	* @covers Fuko\Masked\ValueCollection::hideValue()
-	* @expectedException \PHPUnit\Framework\Error\Warning
 	*/
 	function testHideStdClass()
 	{
+		$this->expectException(Warning::class);
+		$this->expectExceptionMessage('Fuko\Masked\Protect::hideValue() received an object as a hide value');
+
 		$c = new ValueCollection;
 		$c->hideValue( (object) ['a' => 123] );
 	}
@@ -60,10 +69,14 @@ class ValueCollectionTest extends TestCase
 
 	/**
 	* @covers Fuko\Masked\ValueCollection::hideValue()
-	* @expectedException \PHPUnit\Framework\Error\Warning
 	*/
 	function testHideFileHandler()
 	{
+		$this->expectException(Warning::class);
+		$this->expectExceptionMessageRegExp(
+			'~^Fuko\\\\Masked\\\\Protect\:\:hideValue\(\) received unexpected type \(Resource id #\d+\) as a hide value$~'
+			);
+
 		$c = new ValueCollection;
 		$c->hideValue( fopen(__FILE__, 'r') );
 	}
@@ -82,10 +95,14 @@ class ValueCollectionTest extends TestCase
 
 	/**
 	* @covers Fuko\Masked\ValueCollection::hideValues()
-	* @expectedException \PHPUnit\Framework\Error\Warning
 	*/
 	function testHideEmptyValues()
 	{
+		$this->expectException(Warning::class);
+		$this->expectExceptionMessage(
+			'Fuko\Masked\Protect::hideValues() received an empty value as a hide value (key "0" of the $values argument)'
+			);
+
 		$c = new ValueCollection;
 		$c->hideValues( [''] );
 	}
