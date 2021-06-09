@@ -10,6 +10,11 @@ use const INPUT_POST;
 use const INPUT_SERVER;
 use const INPUT_SESSION;
 
+if (!defined('INPUT_SESSION'))
+{
+	define('INPUT_SESSION', 6);
+}
+
 use function strpos;
 use function var_export;
 
