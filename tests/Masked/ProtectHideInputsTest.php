@@ -20,7 +20,6 @@ class ProtectHideInputsTest extends TestCase
 	/**
 	* @dataProvider provider_hideInput
 	* @covers Fuko\Masked\Protect::hideInput
-	* @covers Fuko\Masked\Protect::_validateInput
 	*/
 	function test_hideInput($name, $type)
 	{
@@ -44,7 +43,6 @@ class ProtectHideInputsTest extends TestCase
 	/**
 	* @dataProvider provider_hideInput_bad
 	* @covers Fuko\Masked\Protect::hideInput
-	* @covers Fuko\Masked\Protect::_validateInput
 	* @expectedException \PHPUnit\Framework\Error\Warning
 	*/
 	function test_hideInput_bad($name, $type)
@@ -70,7 +68,6 @@ class ProtectHideInputsTest extends TestCase
 	/**
 	* @dataProvider provider_hideInputs_bad
 	* @covers Fuko\Masked\Protect::hideInputs
-	* @covers Fuko\Masked\Protect::_validateInput
 	* @expectedException \PHPUnit\Framework\Error\Warning
 	*/
 	function test_hideInputs_bad($inputs)
