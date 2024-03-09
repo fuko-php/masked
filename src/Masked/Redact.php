@@ -13,7 +13,7 @@ namespace Fuko\Masked;
 
 use InvalidArgumentException;
 
-use const FILTER_SANITIZE_STRING;
+use const FILTER_SANITIZE_FULL_SPECIAL_CHARS;
 
 use function abs;
 use function array_unshift;
@@ -104,9 +104,9 @@ class Redact
 	*/
 	public static function disguise($value, $unmaskedChars = 4, $maskSymbol = '*')
 	{
-		$value = filter_var($value, FILTER_SANITIZE_STRING);
+		$value = filter_var($value, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 		$unmaskedChars = (int) $unmaskedChars;
-		$maskSymbol = filter_var($maskSymbol, FILTER_SANITIZE_STRING);
+		$maskSymbol = filter_var($maskSymbol, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
 		// not enough chars to unmask ?
 		//
