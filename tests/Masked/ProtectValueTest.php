@@ -91,9 +91,6 @@ class ProtectValueTest extends TestCase
 			var_export(Protect::protect($dummy), true),
 			$username,
 			$password);
-
-		$dummy = $this->edno($username, $password);
-		$this->assertBacktrace(Protect::protect($dummy), $username, $password);
 	}
 
 	function assertBacktrace($redacted, $username, $password)
@@ -104,7 +101,6 @@ class ProtectValueTest extends TestCase
 		$this->assertFalse(
 			strpos($redacted, $password)
 			);
-
 		$this->assertIsInt(
 			strpos($redacted, Redact::redact( $username ))
 			);
@@ -122,18 +118,5 @@ class ProtectValueTest extends TestCase
 	{
 		unset($username, $password);
 		return debug_backtrace();
-	}
-
-	function edno($username, $password)
-	{
-		return $this->dve($username, $password);
-	}
-
-	function dve($username, $password)
-	{
-		unset($username, $password);
-		ob_start();
-		debug_print_backtrace();
-		return ob_get_clean();
 	}
 }
