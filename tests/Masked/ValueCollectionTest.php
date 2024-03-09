@@ -73,7 +73,7 @@ class ValueCollectionTest extends TestCase
 	function testHideFileHandler()
 	{
 		$this->expectException(Warning::class);
-		$this->expectExceptionMessageRegExp(
+		$this->expectExceptionMessageMatches(
 			'~^Fuko\\\\Masked\\\\Protect\:\:hideValue\(\) received unexpected type \(Resource id #\d+\) as a hide value$~'
 			);
 

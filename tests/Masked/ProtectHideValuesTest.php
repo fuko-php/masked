@@ -85,7 +85,7 @@ class ProtectHideValuesTest extends TestCase
 	function test_hideValue_other()
 	{
 		$this->expectException(Warning::class);
-		$this->expectExceptionMessageRegExp(
+		$this->expectExceptionMessageMatches(
 			'~^Fuko\\\\Masked\\\\Protect\:\:hideValue\(\) received unexpected type \(Resource id #\d+\) as a hide value$~'
 			);
 
@@ -176,7 +176,7 @@ class ProtectHideValuesTest extends TestCase
 	function test_hideValues_withOther()
 	{
 		$this->expectException(Warning::class);
-		$this->expectExceptionMessageRegExp(
+		$this->expectExceptionMessageMatches(
 			'~^Fuko\\\\Masked\\\\Protect\:\:hideValues\(\) received unexpected type \(Resource id #\d+\) as a hide value \(key "0" of the \$values argument\)$~'
 			);
 
