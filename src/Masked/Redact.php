@@ -21,9 +21,9 @@ use function call_user_func_array;
 use function filter_var;
 use function is_callable;
 use function round;
-use function strlen;
+use function mb_strlen;
 use function str_repeat;
-use function substr;
+use function mb_substr;
 
 /**
 * Masks sensitive data: replaces blacklisted elements with redacted values
@@ -110,14 +110,14 @@ class Redact
 
 		// not enough chars to unmask ?
 		//
-		if (abs($unmaskedChars) >= strlen($value))
+		if (abs($unmaskedChars) >= mb_strlen($value))
 		{
 			$unmaskedChars = 0;
 		}
 
 		// at least half must be masked ?
 		//
-		if (abs($unmaskedChars) > strlen($value)/2)
+		if (abs($unmaskedChars) > mb_strlen($value)/2)
 		{
 			$unmaskedChars = round($unmaskedChars/2);
 		}
@@ -126,19 +126,19 @@ class Redact
 		//
 		if ($unmaskedChars < 0)
 		{
-			$unmasked = substr($value, 0, -$unmaskedChars);
+			$unmasked = mb_substr($value, 0, -$unmaskedChars);
 			return $unmasked . str_repeat($maskSymbol,
-				strlen($value) - strlen($unmasked)
+				mb_strlen($value) - mb_strlen($unmasked)
 				);
 		}
 
 		// trailing unmasked chars
 		//
 		$unmasked = $unmaskedChars
-			? substr($value, -$unmaskedChars)
+			? mb_substr($value, -$unmaskedChars)
 			: '';
 		return str_repeat($maskSymbol,
-			strlen($value) - strlen($unmasked)
+			mb_strlen($value) - mb_strlen($unmasked)
 			) . $unmasked;
 	}
 }
