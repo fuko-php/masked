@@ -15,13 +15,20 @@ use Fuko\Masked\InputCollection;
 use Fuko\Masked\ValueCollection;
 
 use const FILTER_DEFAULT;
+use const PREG_OFFSET_CAPTURE;
 
+use function count;
 use function filter_var;
 use function is_array;
 use function is_object;
 use function is_scalar;
+use function preg_match;
+use function preg_match_all;
+use function preg_replace_callback;
+use function strlen;
 use function strpos;
 use function str_replace;
+use function substr;
 
 /**
 * Protect sensitive data and redacts it using {@link Fuko\Masked\Redact::redact()}
@@ -192,7 +199,166 @@ final class Protect
 			}
 		}
 
-		return $var;
+		return self::_redactCreditCards($var);
+	}
+
+	/**
+	* Detects and redacts credit card numbers inside a string
+	*
+	* @param string $var
+	* @return string
+	*/
+	private static function _redactCreditCards($var)
+	{
+		$string = (string) $var;
+		$redacted = preg_replace_callback(
+			'~(?<!\d)\d+(?:[ -]\d+)*(?!\d)~',
+			static function ($matches)
+			{
+				return self::_redactCreditCardSequence($matches[0]);
+			},
+			$string
+		);
+		return $redacted === $string
+			? $var
+			: $redacted;
+	}
+
+	/**
+	 * Detects and redacts credit card numbers inside a numeric sequence
+	 *
+	 * @param string $value
+	 * @return string
+	 */
+	private static function _redactCreditCardSequence($value)
+	{
+		preg_match_all(
+			'~\d+~',
+			$value,
+			$matches,
+			PREG_OFFSET_CAPTURE
+		);
+
+		$groups = $matches[0];
+		$count = count($groups);
+		$redacted = '';
+		$offset = 0;
+		$groupIndex = 0;
+
+		while ($groupIndex < $count)
+		{
+			$start = $groups[$groupIndex][1];
+			$digitsLength = 0;
+			$match = NULL;
+
+			for (
+				$candidateIndex = $groupIndex;
+				$candidateIndex < $count;
+				$candidateIndex++
+			)
+			{
+				$groupLength = strlen($groups[$candidateIndex][0]);
+				$digitsLength += $groupLength;
+
+				if ($digitsLength > 19)
+				{
+					break;
+				}
+
+				if ($digitsLength < 13)
+				{
+					continue;
+				}
+
+				$end = $groups[$candidateIndex][1] + $groupLength;
+				$candidate = substr(
+					$value,
+					$start,
+					$end - $start
+				);
+
+				if (self::_isCreditCard($candidate))
+				{
+					$match = array(
+						$start,
+						$end,
+						$candidateIndex
+					);
+				}
+			}
+
+			if (NULL === $match)
+			{
+				$groupIndex++;
+				continue;
+			}
+
+			$redacted .= substr(
+				$value,
+				$offset,
+				$match[0] - $offset
+			);
+
+			$redacted .= Redact::redact(
+				substr(
+					$value,
+					$match[0],
+					$match[1] - $match[0]
+				)
+			);
+
+			$offset = $match[1];
+			$groupIndex = $match[2] + 1;
+		}
+
+		return 0 === $offset
+			? $value
+			: $redacted . substr($value, $offset);
+	}
+
+	/**
+	* Checks whether a value is a valid credit card number
+	* using the Luhn checksum
+	*
+	* @param string $value
+	* @return boolean
+	*/
+	private static function _isCreditCard($value)
+	{
+		$number = str_replace(array(' ', '-'), '', $value);
+		$length = strlen($number);
+
+		if ($length < 13 || $length > 19)
+		{
+			return false;
+		}
+
+		if (preg_match('~^(\d)\1+$~', $number))
+		{
+			return false;
+		}
+
+		$sum = 0;
+		$parity = $length % 2;
+
+		for ($index = 0; $index < $length; $index++)
+		{
+			$digit = (int) $number[$index];
+
+			if ($index % 2 === $parity)
+			{
+				$digit *= 2;
+
+				if ($digit > 9)
+				{
+					$digit -= 9;
+				}
+			}
+
+			$sum += $digit;
+		}
+
+		return 0 === $sum % 10;
 	}
 
 	/**
