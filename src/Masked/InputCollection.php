@@ -11,7 +11,7 @@
 
 namespace Fuko\Masked;
 
-use const FILTER_SANITIZE_STRING;
+use const FILTER_UNSAFE_RAW;
 use const E_USER_WARNING;
 use const INPUT_ENV;
 use const INPUT_SERVER;
@@ -183,7 +183,7 @@ class InputCollection
 
 		return filter_var(
 			$input[$name],
-			FILTER_SANITIZE_STRING
+			FILTER_UNSAFE_RAW
 		);
 	}
 
